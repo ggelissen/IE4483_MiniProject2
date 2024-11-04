@@ -12,7 +12,7 @@ import os
 import numpy as np
 import pandas as pd
 from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 #### Loading model and input/output files ####
@@ -21,7 +21,7 @@ from keras.preprocessing.image import ImageDataGenerator
 model = load_model('cnn_model.keras')
 
 # Define test folder and output file
-test_dir = 'datasets/test'
+test_dir = 'datasets\\test'
 output_file = 'submission.csv'
 
 
