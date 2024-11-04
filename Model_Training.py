@@ -11,7 +11,7 @@
 import os
 from keras import optimizers, regularizers
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import numpy as np
@@ -60,43 +60,29 @@ train_generator = train_datagen.flow_from_directory(train_dir, target_size=(224,
 val_generator = val_datagen.flow_from_directory(val_dir, target_size=(224, 224), batch_size=32, class_mode='binary')           # Target size: 224,224.
                                                                                                                                 # Batch size: 128
 
-#### Create CNN Model (VGG16-based) ####
+#### Create CNN Model ####
 
-model = Sequential()    # Initiate model
+model = Sequential()
 
-# Convolution layer 1 (filter=64)
-model.add(Conv2D(input_shape=(224,224,3),filters=64,kernel_size=(3,3),padding="same", activation="relu"))   # Parameters (2):
-model.add(Conv2D(filters=64,kernel_size=(3,3),padding="same", activation="relu"))                           # Filters: 64, 128, 256, 512, 512
-model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))                                                      # Kernel size: 3,3
-                                                                                                            
-# Convolution layer 2 (filter=128)                                                               
-model.add(Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)))
+model.add(MaxPooling2D((2, 2)))
 
-# Convolution layer 3 (filter=256)
-model.add(Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2, 2)))
 
-# Convolution layer 4 (filter=512)
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2, 2)))
 
-# Convolution layer 5 (filter=512)
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2, 2)))
 
-# Fully connected layers
+model.add(Conv2D(256, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2, 2)))
+
 model.add(Flatten())
-model.add(Dense(units=4096,activation="relu"))
-model.add(Dense(units=4096,activation="relu"))
-model.add(Dense(units=1, activation="sigmoid"))     # Activation function: sigmoid (variable)
+model.add(Dropout(0.6))
+model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.001)))     # Regularization: L2 (variable)
+model.add(Dense(1, activation='sigmoid'))                                               # Activation function: sigmoid (variable)
 
 model.summary()   # Display model summary
 
