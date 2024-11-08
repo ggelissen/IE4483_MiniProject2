@@ -10,11 +10,10 @@
 
 import os
 from keras import optimizers, regularizers
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import ModelCheckpoint, EarlyStopping
-import numpy as np
+from tensorflow.keras.models import Sequential                                          # type: ignore
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout       # type: ignore
+from tensorflow.keras.preprocessing.image import ImageDataGenerator                     # type: ignore
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping                   # type: ignore
 import matplotlib.pyplot as plt
 
 
@@ -97,8 +96,6 @@ model.compile(loss='binary_crossentropy',                       # Parameters (3)
 checkpoint = ModelCheckpoint("cnn_model.keras", monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=False, mode='auto')
 # Stop training if validation accuracy does not improve for 20 epochs
 early_stopping = EarlyStopping(monitor='val_acc', min_delta=0, patience=20, verbose=1, mode='auto')   # Patience=20 (variable)
-# Reduce learning rate by 5% after each epoch
-#lr_schedule = callbacks.LearningRateScheduler(lambda epoch: 1e-3 * 0.95 ** epoch)  
 
 
 #### Fit the Model ####
