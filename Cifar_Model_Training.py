@@ -18,27 +18,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 #### Rename directories ####
 
 # Training data
-train_dir = 'datasets/train'
-train_cat_dir = 'datasets/train/cat'
-train_dog_dir = 'datasets/train/dog'
+train_dir = 'cifar10/train'
+
 
 # Validation data
-val_dir = 'datasets/val'
-val_cat_dir = 'datasets/val/cat'
-val_dog_dir = 'datasets/val/dog'
+val_dir = 'cifar10/val'
+
 
 # Test data
-test_dir = 'datasets/test'
+test_dir = 'cifar10/test'
+
 
 
 #### Check quantities ####
 
-print('total training images:', len(os.listdir(train_cat_dir)) + len(os.listdir(train_dog_dir)))
-print('total validation images:', len(os.listdir(val_cat_dir)) + len(os.listdir(val_dog_dir)))
+#print('total training images:', len(os.listdir(train_cat_dir)) + len(os.listdir(train_dog_dir)))
+#print('total validation images:', len(os.listdir(val_cat_dir)) + len(os.listdir(val_dog_dir)))
 print('total test images:', len(os.listdir(test_dir)))
 
 
@@ -46,7 +44,7 @@ print('total test images:', len(os.listdir(test_dir)))
 
 # Create objects for training and validation data
 train_datagen = ImageDataGenerator(
-    rescale=1./255,
+    #rescale=1./255,
     rotation_range=40,
     width_shift_range=0.2,
     height_shift_range=0.2,                         # Train model using image augmentation
@@ -54,18 +52,19 @@ train_datagen = ImageDataGenerator(
     zoom_range=0.2,
     horizontal_flip=True,
     fill_mode='nearest')
-val_datagen = ImageDataGenerator(rescale=1./255)    # Validation data should not be augmented
+val_datagen = ImageDataGenerator()    # Validation data should not be augmented
+
+classes = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
 
 # Pass data into respective objects, labelling data as cat or dog
-train_generator = train_datagen.flow_from_directory(train_dir, target_size=(224, 224), batch_size=32, class_mode='binary')     # Parameters (1):
-val_generator = val_datagen.flow_from_directory(val_dir, target_size=(224, 224), batch_size=32, class_mode='binary')           # Target size: 224,224.
-                                                                                                                                # Batch size: 128
-
+train_generator = train_datagen.flow_from_directory(train_dir, target_size=(32, 32), batch_size=32, class_mode='categorical', classes=classes)     # Parameters (1):
+val_generator = val_datagen.flow_from_directory(val_dir, target_size=(32, 32), batch_size=32, class_mode='categorical', classes=classes)           # Target size: 16,16.
+                                                                                                                         # Batch size: 128
 #### Create CNN Model ####
 
 model = Sequential()
 
-model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)))
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
 model.add(MaxPooling2D((2, 2)))
 
 model.add(Conv2D(64, (3, 3), activation='relu'))
@@ -83,7 +82,7 @@ model.add(MaxPooling2D((2, 2)))
 model.add(Flatten())
 model.add(Dropout(0.6))
 model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.001)))     # Regularization: L2 (variable)
-model.add(Dense(1, activation='sigmoid'))                                               # Activation function: sigmoid (variable)
+model.add(Dense(10, activation='softmax'))  # suggested final layer and activation function                                            # Activation function: sigmoid (variable)
 
 model.summary()   # Display model summary
 
