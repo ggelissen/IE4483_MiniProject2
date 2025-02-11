@@ -29,7 +29,7 @@ test_df = pd.DataFrame({'filename': test_images})
 
 #### Image Processing ####
 
-# Prepare list to hold image data and filenames
+# Prepare list to hold image data and filenames ...
 test_images = []
 image_ids = []
 
